@@ -1,0 +1,15 @@
+body{
+background-color:  #dcdde1;
+}
+.capital-logo, .regular-logo{
+    font-family: 'Oswald', Courier, monospace;
+    font-size: 1.3em;
+}
+
+.capital-logo{
+    color: red;
+}
+
+.regular-logo{
+
+}
