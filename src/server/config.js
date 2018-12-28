@@ -1,3 +1,7 @@
+/******************************************************* */
+/*       CONFIGURACIÓN DEL SERVIDOR                     */
+/*******************************************************/
+
 /* Aqui se configura express */
 const path = require('path');
 //este weon se encarga de mezclar la data del controlador con la vista

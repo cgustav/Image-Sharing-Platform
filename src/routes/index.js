@@ -27,5 +27,10 @@ module.exports = app =>{
     //RUTA DELETE:para eliminar una imagen con id [image_id]
     router.delete('/images/:image_id', image.deletion);
 
+    //TODO: Para creación y login de ususarios
+    //router.get('/login',login.start);
+    //router.post('/loged/index', login.index);
+    //router.post('/logout',login.end);
+
     app.use(router);
 };

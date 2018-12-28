@@ -10,14 +10,29 @@ const { Image, Comment } = require('../models');
 const control = {};
 
 control.index = async (req, res) => {
+    //objeto que contiene los elementos que pertenecen a la vista
+    const viewModel = {image: {}, comments:{}};
     //acciones dentro de la funcion index
     //buscsando todas las imagenes que cumplan con el parámnetro (id)
     //donde filename conincida con una expresión regular refernciando al id de la imagen
     const result = await Image.findOne({ filename: { $regex: req.params.image_id } });
-    console.log(result);
-    //renderizando images.hbs
-    //pasando el objeto obtenido desde mongo a images.hbs a través de un objeto 'result'
-    res.render('images', { result });
+
+    if (result) {
+        viewModel.image = result;
+        //Actualizando las vistas (views) a la imagen 
+        result.views = result.views + 1;
+        await result.save();
+        const comments = await Comment.find({ image_id: result._id });
+        viewModel.comments = comments;
+        //renderizando images.hbs
+        //pasando el objeto obtenido desde mongo a images.hbs a través de un objeto 'result' y 'comments'
+        res.render('images', viewModel);
+    }else{
+        res.status(500).json({ error: 'Internal Error' });
+    }
+    
+    
+    
 };
 
 control.create = async (req, res) => {
@@ -76,8 +91,16 @@ control.create = async (req, res) => {
 
 };
 
-control.like = (req, res) => {
+control.like = async (req, res) => {
     //acciones para la creación de likes dentro de una imagen 
+   const image =  await Image.findOne({filename: {$regex: req.params.image_id}});
+    if (image) {
+        image.likes = image.likes + 1;
+        await image.save();
+        res.json({likes: image.likes});
+    }else{
+        res.status(500).json({error: 'Internal Error'});
+    }
 };
 
 control.comment = async (req, res) => {
@@ -85,6 +108,8 @@ control.comment = async (req, res) => {
     //---> Se busca el objeto de la imagen según el id de imagen capturado por el request.
     const imageFore = await Image.findOne({ filename: { $regex: req.params.image_id } });
     //---> si coincide.
+    
+
     if (imageFore) {
         //creando un nuevo modelo de comentario a partir del request body
         const newComment = new Comment(req.body);
@@ -97,13 +122,43 @@ control.comment = async (req, res) => {
 
         //console.log(newComment); 
         res.redirect('/images/'+imageFore.uniqueId);
+    }else{
+        res.redirect('/index');
     }
 
     //console.log(newComment);
 
 };
 
-control.deletion = (req, res) => {
+control.deletion = async (req, res) => {
     //acciones para la eliminar una imagen
+    const image = await Image.findOne({filename: {$regex: req.params.image_id}});
+
+    if (image) {
+        //Eliminando del alamacenamiento en servidor
+        await fs.unlink(path.resolve('./src/public/upload/'+ image.filename));
+        //Eliminando comentarios relacionados a la imagen en Mongo
+        await Comment.deleteOne({image_id: image._id});
+        //Eliminando imagen en Mongo
+        await image.remove();
+        //Devolviendo la confirmación de la eliminación de la imagen  
+        res.json(true);
+    }else{
+        res.json({response: 'Bad request.'});
+    }
 };
+
 module.exports = control;
+
+
+
+//Para comprobar si un objeto (request) está vacío
+//FIXME: ¿Debe ir en carpeta helpers, se debe crear un helper dentro de esta carpeta o está bien que vaya aquí?
+/*
+function isEmpty(obj) {
+    if (Object.keys(obj).length === 0 ) {
+        return true;
+    }
+    return false;
+}
+*/

@@ -1,0 +1,8 @@
+
+function checkSimply (){
+
+}
+
+function  checkEmail() {
+    
+}
