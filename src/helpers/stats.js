@@ -5,7 +5,7 @@ async function ImageCounter() {
     return await Image.countDocuments();
 }
 
-function CommentsCounter() {
+async function CommentsCounter() {
     return await Comment.countDocuments();
 }
 
@@ -23,15 +23,19 @@ async function ImageTotalViewsCounter() {
     return result[0].viewsTotal;
 }
 
-function LikesTotalCounter() {
+async function LikesTotalCounter() {
     const result = await Image.aggregate([{
         $group: {
             _id: '1',
             likesTotal: { $sum: '$likes' }
         }
     }]);
+    let likesTotal = 0;
+    if (result.length > 0) {
+        likesTotal += result[0].likesTotal;
+    }
     //retorna el valor de la propiedad viewsTotal (solamente el del primer elemento del arreglo)
-    return result[0].likesTotal;
+    return likesTotal;
 }
 
 module.exports = async () => {

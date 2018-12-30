@@ -35,7 +35,7 @@ module.exports = app => {
         layoutsDir: path.join(app.get('views'), 'layouts'),
         //Nombre de la extensión del archivo que tiene que leer la wea
         extname: '.hbs',
-        //Funciones que te ayudan a hacer weas
+        //Helpers son funciones que ayudan a cumplir tareas repetitivas o que requieren de una lógica compleja, separada de las demás funciones 
         helpers: require('./helpers')
     }));
     //Utilizando el engine handlebars

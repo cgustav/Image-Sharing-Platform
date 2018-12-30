@@ -3,6 +3,7 @@ function checkSimply (){
 
 }
 
-function  checkEmail() {
+function checkEmail() {
+   
     
 }

@@ -26,6 +26,8 @@ module.exports = app =>{
     router.post('/images/:image_id/comment', image.comment);
     //RUTA DELETE:para eliminar una imagen con id [image_id]
     router.delete('/images/:image_id', image.deletion);
+    //RUTA GET:para errores genéricos
+    router.get('/error', home.error);
 
     //TODO: Para creación y login de ususarios
     //router.get('/login',login.start);

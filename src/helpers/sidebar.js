@@ -24,11 +24,11 @@ module.exports = async viewModel => {
         Images.popular(),
         Comments.newest()
     ]);
-    return viewModel.sidebar = {
+     viewModel.sidebar = {
         stats: results[0],
         popular: results[1],
-        comment: results[3]
+        comment: results[2]
     }
-
+    return viewModel;
 }
 

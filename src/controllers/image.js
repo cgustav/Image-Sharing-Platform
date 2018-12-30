@@ -7,11 +7,12 @@ const fs = require('fs-extra');
 const md5 =  require('md5');
 //importando el modelo 
 const { Image, Comment } = require('../models');
+const sidebar = require('../helpers/sidebar');
 const control = {};
 
 control.index = async (req, res) => {
     //objeto que contiene los elementos que pertenecen a la vista
-    const viewModel = {image: {}, comments:{}};
+    let viewModel = {image: {}, comments:{}};
     //acciones dentro de la funcion index
     //buscsando todas las imagenes que cumplan con el parámnetro (id)
     //donde filename conincida con una expresión regular refernciando al id de la imagen
@@ -23,12 +24,15 @@ control.index = async (req, res) => {
         result.views = result.views + 1;
         await result.save();
         const comments = await Comment.find({ image_id: result._id });
-        viewModel.comments = comments;
-        //renderizando images.hbs
         //pasando el objeto obtenido desde mongo a images.hbs a través de un objeto 'result' y 'comments'
+        viewModel.comments = comments;
+        
+        
+        viewModel = await sidebar(viewModel);
+        //renderizando images.hbs 
         res.render('images', viewModel);
     }else{
-        res.status(500).json({ error: 'Internal Error' });
+        res.redirect('/error');
     }
     
     
